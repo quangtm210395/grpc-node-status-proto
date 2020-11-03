@@ -130,9 +130,9 @@ export function serializeGrpcStatusDetails<
 >(statusProto: StatusProto, namesMap: TMap) {
   const error: ServiceError = {
     name: 'ServiceError',
-    code: this.code,
-    message: this.message,
-    details: this.message,
+    code: statusProto.getCode(),
+    message: statusProto.getMessage(),
+    details: statusProto.getMessage(),
   };
   error.metadata = new Metadata();
 

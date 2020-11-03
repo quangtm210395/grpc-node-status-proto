@@ -90,9 +90,9 @@ exports.deserializeGoogleGrpcStatusDetails = deserializeGoogleGrpcStatusDetails;
 function serializeGrpcStatusDetails(statusProto, namesMap) {
     const error = {
         name: 'ServiceError',
-        code: this.code,
-        message: this.message,
-        details: this.message,
+        code: statusProto.getCode(),
+        message: statusProto.getMessage(),
+        details: statusProto.getMessage(),
     };
     error.metadata = new grpc_1.Metadata();
     const protoStatus = new status_pb_1.Status();
