@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serializeGoogleGrpcStatusDetails = exports.serializeGrpcStatusDetails = exports.deserializeGoogleGrpcStatusDetails = exports.deserializeGrpcStatusDetails = exports.StatusProto = exports.GRPC_ERROR_DETAILS_KEY = exports.googleErrorDetailsNameMap = exports.googleDeserializeMap = void 0;
+exports.serializeGrpcStatusDetails = exports.deserializeGoogleGrpcStatusDetails = exports.deserializeGrpcStatusDetails = exports.StatusProto = exports.GRPC_ERROR_DETAILS_KEY = exports.googleErrorDetailsTypeNameMap = exports.googleDeserializeMap = void 0;
 const grpc_1 = require("grpc");
 const any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 const status_pb_1 = require("./google/status_pb");
@@ -16,7 +16,7 @@ exports.googleDeserializeMap = {
     'google.rpc.Help': error_details_pb_1.Help.deserializeBinary,
     'google.rpc.LocalizedMessage': error_details_pb_1.LocalizedMessage.deserializeBinary,
 };
-exports.googleErrorDetailsNameMap = {
+exports.googleErrorDetailsTypeNameMap = {
     RetryInfo: 'google.rpc.RetryInfo',
     DebugInfo: 'google.rpc.DebugInfo',
     QuotaFailure: 'google.rpc.QuotaFailure',
@@ -98,7 +98,7 @@ function deserializeGoogleGrpcStatusDetails(error) {
     return deserializeGrpcStatusDetails(error, exports.googleDeserializeMap);
 }
 exports.deserializeGoogleGrpcStatusDetails = deserializeGoogleGrpcStatusDetails;
-function serializeGrpcStatusDetails(statusProto, namesMap) {
+function serializeGrpcStatusDetails(statusProto, typeName) {
     const error = {
         name: 'ServiceError',
         code: statusProto.getCode(),
@@ -109,15 +109,11 @@ function serializeGrpcStatusDetails(statusProto, namesMap) {
     const st = statusProto.getStatus();
     statusProto.getDetails().forEach((detail) => {
         const a = new any_pb_1.Any();
-        a.pack(detail.serializeBinary(), namesMap[detail.name]);
+        a.pack(detail.serializeBinary(), typeName);
         st.addDetails(a);
     });
     error.metadata.add(exports.GRPC_ERROR_DETAILS_KEY, Buffer.from(st.serializeBinary()));
     return error;
 }
 exports.serializeGrpcStatusDetails = serializeGrpcStatusDetails;
-function serializeGoogleGrpcStatusDetails(statusProto) {
-    return serializeGrpcStatusDetails(statusProto, exports.googleErrorDetailsNameMap);
-}
-exports.serializeGoogleGrpcStatusDetails = serializeGoogleGrpcStatusDetails;
 //# sourceMappingURL=status_proto.js.map

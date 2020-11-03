@@ -13,7 +13,7 @@ export declare const googleDeserializeMap: {
     'google.rpc.Help': typeof Help.deserializeBinary;
     'google.rpc.LocalizedMessage': typeof LocalizedMessage.deserializeBinary;
 };
-export declare const googleErrorDetailsNameMap: {
+export declare const googleErrorDetailsTypeNameMap: {
     RetryInfo: string;
     DebugInfo: string;
     QuotaFailure: string;
@@ -41,5 +41,4 @@ export declare class StatusProto {
 }
 export declare function deserializeGrpcStatusDetails<TMap extends Record<string, (bytes: Uint8Array) => Message>>(error: ServiceError, deserializeMap: TMap): StatusProto | null;
 export declare function deserializeGoogleGrpcStatusDetails(error: ServiceError): StatusProto;
-export declare function serializeGrpcStatusDetails<TMap extends Record<string, string>>(statusProto: StatusProto, namesMap: TMap): ServiceError;
-export declare function serializeGoogleGrpcStatusDetails(statusProto: StatusProto): ServiceError;
+export declare function serializeGrpcStatusDetails(statusProto: StatusProto, typeName: string): ServiceError;

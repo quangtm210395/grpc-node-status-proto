@@ -26,7 +26,7 @@ export const googleDeserializeMap = {
   'google.rpc.LocalizedMessage': LocalizedMessage.deserializeBinary,
 };
 
-export const googleErrorDetailsNameMap = {
+export const googleErrorDetailsTypeNameMap = {
   RetryInfo: 'google.rpc.RetryInfo',
   DebugInfo: 'google.rpc.DebugInfo',
   QuotaFailure: 'google.rpc.QuotaFailure',
@@ -136,9 +136,7 @@ export function deserializeGoogleGrpcStatusDetails(error: ServiceError) {
   return deserializeGrpcStatusDetails(error, googleDeserializeMap);
 }
 
-export function serializeGrpcStatusDetails<
-  TMap extends Record<string, string>
->(statusProto: StatusProto, namesMap: TMap) {
+export function serializeGrpcStatusDetails(statusProto: StatusProto, typeName: string) {
   const error: ServiceError = {
     name: 'ServiceError',
     code: statusProto.getCode(),
@@ -150,14 +148,10 @@ export function serializeGrpcStatusDetails<
   const st = statusProto.getStatus();
   statusProto.getDetails().forEach((detail) => {
     const a = new Any();
-    a.pack(detail.serializeBinary(), namesMap[(<any>detail).name]);
+    a.pack(detail.serializeBinary(), typeName);
     st.addDetails(a);
   });
   error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(st.serializeBinary()));
 
   return error;
-}
-
-export function serializeGoogleGrpcStatusDetails(statusProto: StatusProto) {
-  return serializeGrpcStatusDetails(statusProto, googleErrorDetailsNameMap);
 }
