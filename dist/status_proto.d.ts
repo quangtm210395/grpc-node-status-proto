@@ -25,7 +25,7 @@ export declare const googleErrorDetailsNameMap: {
     LocalizedMessage: string;
 };
 export declare const GRPC_ERROR_DETAILS_KEY = "grpc-status-details-bin";
-export default class StatusProto {
+export declare class StatusProto {
     private status;
     private code;
     private message;
@@ -40,3 +40,4 @@ export default class StatusProto {
 export declare function deserializeGrpcStatusDetails<TMap extends Record<string, (bytes: Uint8Array) => Message>>(error: ServiceError, deserializeMap: TMap): StatusProto | null;
 export declare function deserializeGoogleGrpcStatusDetails(error: ServiceError): StatusProto;
 export declare function serializeGrpcStatusDetails<TMap extends Record<string, string>>(statusProto: StatusProto, namesMap: TMap): ServiceError;
+export declare function serializeGoogleGrpcStatusDetails(statusProto: StatusProto): ServiceError;

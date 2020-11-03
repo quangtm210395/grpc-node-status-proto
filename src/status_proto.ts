@@ -44,7 +44,7 @@ const notEmpty = <TValue>(
 
 export const GRPC_ERROR_DETAILS_KEY = 'grpc-status-details-bin';
 
-export default class StatusProto {
+export class StatusProto {
   private status: Status | undefined;
 
   private code: number;
@@ -147,4 +147,8 @@ export function serializeGrpcStatusDetails<
   error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(protoStatus.serializeBinary()));
 
   return error;
+}
+
+export function serializeGoogleGrpcStatusDetails(statusProto: StatusProto) {
+  return serializeGrpcStatusDetails(statusProto, googleErrorDetailsNameMap);
 }

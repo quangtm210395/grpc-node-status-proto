@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serializeGrpcStatusDetails = exports.deserializeGoogleGrpcStatusDetails = exports.deserializeGrpcStatusDetails = exports.GRPC_ERROR_DETAILS_KEY = exports.googleErrorDetailsNameMap = exports.googleDeserializeMap = void 0;
+exports.serializeGoogleGrpcStatusDetails = exports.serializeGrpcStatusDetails = exports.deserializeGoogleGrpcStatusDetails = exports.deserializeGrpcStatusDetails = exports.StatusProto = exports.GRPC_ERROR_DETAILS_KEY = exports.googleErrorDetailsNameMap = exports.googleDeserializeMap = void 0;
 const grpc_1 = require("grpc");
 const any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 const status_pb_1 = require("./google/status_pb");
@@ -58,7 +58,7 @@ class StatusProto {
         return this;
     }
 }
-exports.default = StatusProto;
+exports.StatusProto = StatusProto;
 function deserializeGrpcStatusDetails(error, deserializeMap) {
     if (!error.metadata) {
         return null;
@@ -107,4 +107,8 @@ function serializeGrpcStatusDetails(statusProto, namesMap) {
     return error;
 }
 exports.serializeGrpcStatusDetails = serializeGrpcStatusDetails;
+function serializeGoogleGrpcStatusDetails(statusProto) {
+    return serializeGrpcStatusDetails(statusProto, exports.googleErrorDetailsNameMap);
+}
+exports.serializeGoogleGrpcStatusDetails = serializeGoogleGrpcStatusDetails;
 //# sourceMappingURL=status_proto.js.map
