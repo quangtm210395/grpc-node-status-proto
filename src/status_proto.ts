@@ -53,11 +53,22 @@ export class StatusProto {
 
   private details: Message[];
 
-  constructor(status: Status) {
-    this.status = status;
-    this.code = status.getCode();
-    this.message = status.getMessage();
-    this.details = [];
+  static fromStatus(status: Status) {
+    return new StatusProto(status.getCode(), status.getMessage(), status);
+  }
+
+  constructor(code: number, message: string, status?: Status) {
+    this.code = code;
+    this.message = message;
+    if (!status) {
+      this.status = new Status();
+      this.status.setCode(code);
+      this.status.setMessage(message);
+    } else this.status = status;
+  }
+
+  getStatus() {
+    return this.status;
   }
 
   getCode() {
@@ -103,7 +114,7 @@ export function deserializeGrpcStatusDetails<
 
   const status: Status | undefined = Status.deserializeBinary(buffer);
 
-  const statusProto = new StatusProto(status);
+  const statusProto = StatusProto.fromStatus(status);
 
   const details = status
     .getDetailsList()
@@ -136,15 +147,13 @@ export function serializeGrpcStatusDetails<
   };
   error.metadata = new Metadata();
 
-  const protoStatus = new Status();
-  protoStatus.setCode(this.code);
-  protoStatus.setMessage(this.message);
+  const st = statusProto.getStatus();
   statusProto.getDetails().forEach((detail) => {
     const a = new Any();
     a.pack(detail.serializeBinary(), namesMap[detail.constructor.name]);
-    protoStatus.addDetails(a);
+    st.addDetails(a);
   });
-  error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(protoStatus.serializeBinary()));
+  error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(st.serializeBinary()));
 
   return error;
 }

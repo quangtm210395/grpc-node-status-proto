@@ -30,11 +30,22 @@ exports.googleErrorDetailsNameMap = {
 const notEmpty = (value) => value !== null && value !== undefined;
 exports.GRPC_ERROR_DETAILS_KEY = 'grpc-status-details-bin';
 class StatusProto {
-    constructor(status) {
-        this.status = status;
-        this.code = status.getCode();
-        this.message = status.getMessage();
-        this.details = [];
+    constructor(code, message, status) {
+        this.code = code;
+        this.message = message;
+        if (!status) {
+            this.status = new status_pb_1.Status();
+            this.status.setCode(code);
+            this.status.setMessage(message);
+        }
+        else
+            this.status = status;
+    }
+    static fromStatus(status) {
+        return new StatusProto(status.getCode(), status.getMessage(), status);
+    }
+    getStatus() {
+        return this.status;
     }
     getCode() {
         return this.code;
@@ -68,7 +79,7 @@ function deserializeGrpcStatusDetails(error, deserializeMap) {
         return null;
     }
     const status = status_pb_1.Status.deserializeBinary(buffer);
-    const statusProto = new StatusProto(status);
+    const statusProto = StatusProto.fromStatus(status);
     const details = status
         .getDetailsList()
         .map((detail) => {
@@ -95,15 +106,13 @@ function serializeGrpcStatusDetails(statusProto, namesMap) {
         details: statusProto.getMessage(),
     };
     error.metadata = new grpc_1.Metadata();
-    const protoStatus = new status_pb_1.Status();
-    protoStatus.setCode(this.code);
-    protoStatus.setMessage(this.message);
+    const st = statusProto.getStatus();
     statusProto.getDetails().forEach((detail) => {
         const a = new any_pb_1.Any();
         a.pack(detail.serializeBinary(), namesMap[detail.constructor.name]);
-        protoStatus.addDetails(a);
+        st.addDetails(a);
     });
-    error.metadata.add(exports.GRPC_ERROR_DETAILS_KEY, Buffer.from(protoStatus.serializeBinary()));
+    error.metadata.add(exports.GRPC_ERROR_DETAILS_KEY, Buffer.from(st.serializeBinary()));
     return error;
 }
 exports.serializeGrpcStatusDetails = serializeGrpcStatusDetails;

@@ -30,7 +30,9 @@ export declare class StatusProto {
     private code;
     private message;
     private details;
-    constructor(status: Status);
+    static fromStatus(status: Status): StatusProto;
+    constructor(code: number, message: string, status?: Status);
+    getStatus(): Status;
     getCode(): number;
     getMessage(): string;
     getDetails(): Message[];
