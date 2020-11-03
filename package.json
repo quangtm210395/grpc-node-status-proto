@@ -9,7 +9,7 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
-    "clean-build": "npm run clean && npm run build"
+    "clean-build": "npm run clean && npm run build && cp -r src/google dist"
   },
   "repository": {
     "type": "git",
