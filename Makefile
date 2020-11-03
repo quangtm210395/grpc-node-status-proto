@@ -5,7 +5,7 @@ GID:=$(shell id -g)
 grpc-generate:
 
 	@rm -rf generated
-	@mkdir -p build
+	@mkdir -p generated
 	@docker run --rm -v `pwd`:/src -w /src -u $(UID):$(GID) quangtm210395/protobuf \
 		--plugin=protoc-gen-grpc=./node_modules/.bin/grpc_tools_node_protoc_plugin \
 		-I./proto \
@@ -18,9 +18,8 @@ grpc-generate:
 	rm -rf src/google
 	mkdir src/google
 	cp -r generated/* src/google
-	npm run clean-build
-	cp -r build/* dist
-	rm -rf build
+	# npm run clean-build
+	# rm -rf generated
 
 
 # protoc --plugin=protoc-gen-grpc=./node_modules/.bin/grpc_tools_node_protoc_plugin -I proto --js_out=import_style=commonjs,binary:./dist ./proto/*/*.proto && protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts -I proto --ts_out=./dist ./proto/*/*.proto
