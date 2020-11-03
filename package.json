@@ -1,0 +1,42 @@
+{
+  "name": "grpc-node-status-proto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
+    "clean-build": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quangtm210395/grpc-node-status-proto.git"
+  },
+  "author": "quangtm",
+  "license": "MIT",
+  "dependencies": {
+    "@types/google-protobuf": "*",
+    "@types/node": "*",
+    "@types/protobufjs": "*",
+    "google-protobuf": "^3.11.4",
+    "grpc": "^1.24.2",
+    "grpc-tools": "1.8.1",
+    "grpc_tools_node_protoc_ts": "^2.5.10",
+    "typescript": "^3.9.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.6.0",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-typescript": "^5.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "husky": "^4.2.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run clean-build && git add dist"
+    }
+  }
+}
