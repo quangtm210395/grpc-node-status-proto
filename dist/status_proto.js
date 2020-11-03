@@ -109,7 +109,7 @@ function serializeGrpcStatusDetails(statusProto, namesMap) {
     const st = statusProto.getStatus();
     statusProto.getDetails().forEach((detail) => {
         const a = new any_pb_1.Any();
-        a.pack(detail.serializeBinary(), namesMap[detail.constructor.name]);
+        a.pack(detail.serializeBinary(), namesMap[detail.name]);
         st.addDetails(a);
     });
     error.metadata.add(exports.GRPC_ERROR_DETAILS_KEY, Buffer.from(st.serializeBinary()));
