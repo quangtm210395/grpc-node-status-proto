@@ -31,7 +31,8 @@
     "eslint": "^6.5.1",
     "eslint-config-airbnb-typescript": "^5.0.0",
     "eslint-plugin-import": "^2.20.2",
-    "husky": "^4.2.5"
+    "husky": "^4.2.5",
+    "node-pre-gyp": "^0.16.0"
   },
   "husky": {
     "hooks": {
