@@ -77,7 +77,6 @@ export class StatusProto {
       name: 'ServiceError',
       code: this.code,
       message: this.message,
-      details: this.detailDescription,
     };
     error.metadata = new Metadata();
     error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(this.status.serializeBinary()));
