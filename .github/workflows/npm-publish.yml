@@ -18,8 +18,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm ci
-      - run: npm run clean-build --build-from-resource
+      - run: npm ci --build-from-resource
+      - run: npm run clean-build
 
   publish-npm:
     needs: build
