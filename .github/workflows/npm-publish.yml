@@ -11,15 +11,15 @@ on:
   #   types: [created]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 10
-      - run: npm ci --build-from-resource
-      - run: npm run clean-build
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 10
+  #     - run: npm ci --build-from-resource
+  #     - run: npm test
 
   publish-npm:
     needs: build
@@ -30,7 +30,8 @@ jobs:
         with:
           node-version: 10
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
+      - run: npm ci --build-from-resource
+      - run: npm run clean-build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
