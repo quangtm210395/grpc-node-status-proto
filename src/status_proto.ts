@@ -18,7 +18,7 @@ type DeserializeMap<K extends keyof any, V extends (bytes: Uint8Array) => any> =
   [P in K]: V
 };
 
-export const googleDeserializeMap: DeserializeMap<string, (bytes: Uint8Array) => Message> = {
+export const googleDeserializeMap = {
   'google.rpc.RetryInfo': RetryInfo.deserializeBinary,
   'google.rpc.DebugInfo': DebugInfo.deserializeBinary,
   'google.rpc.QuotaFailure': QuotaFailure.deserializeBinary,
@@ -48,14 +48,14 @@ const notEmpty = <TValue>(
 
 export const GRPC_ERROR_DETAILS_KEY = 'grpc-status-details-bin';
 
-export class StatusProto {
+export class StatusProto<T extends Message> {
   private status: Status | undefined;
 
   private code: number;
 
   private message: string;
 
-  private details: Message[];
+  private details: Array<T>;
 
   static fromStatus(st: Status) {
     return new StatusProto(st.getCode(), st.getMessage());
@@ -81,12 +81,12 @@ export class StatusProto {
     return error;
   }
 
-  static fromServiceError(
+  static fromServiceError<T extends Message>(
     error: ServiceError,
-    deserializeMap?: DeserializeMap<string, (bytes: Uint8Array) => Message>,
-  ): StatusProto | null {
-    const dMap = deserializeMap || googleDeserializeMap;
-    const statusProto = new StatusProto(error.code, error.details || error.message);
+    deserializeMap?: DeserializeMap<string, (bytes: Uint8Array) => T>,
+  ): StatusProto<ReturnType<DeserializeMap<string, (bytes: Uint8Array)
+    => T>[keyof DeserializeMap<string, (bytes: Uint8Array) => T>]>> | null {
+    const statusProto = new StatusProto<T>(error.code, error.details || error.message);
 
     if (error.metadata?.get(GRPC_ERROR_DETAILS_KEY)?.length > 0) {
       const buffer = error.metadata.get(GRPC_ERROR_DETAILS_KEY)[0];
@@ -97,7 +97,7 @@ export class StatusProto {
         const details = st
           .getDetailsList()
           .map((detail) => {
-            const deserialize = dMap[detail.getTypeName()];
+            const deserialize = deserializeMap[detail.getTypeName()];
             if (deserialize) {
               const message = detail.unpack(deserialize, detail.getTypeName());
 
@@ -128,7 +128,7 @@ export class StatusProto {
     return this.details;
   }
 
-  addDetail(detail: Message, typeName: string) {
+  addDetail(detail: T, typeName: string) {
     if (!this.details) this.details = [];
     this.details.push(detail);
     const a = new Any();
@@ -137,7 +137,7 @@ export class StatusProto {
     return this;
   }
 
-  private addUnpackedDetails(details: Message[]) {
+  private addUnpackedDetails(details: T[]) {
     if (!this.details) this.details = [];
     this.details.push(...details);
     return this;
