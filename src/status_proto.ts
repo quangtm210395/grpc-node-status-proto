@@ -14,7 +14,11 @@ import {
   LocalizedMessage,
 } from './google/error_details_pb';
 
-export const googleDeserializeMap = {
+type DeserializeMap<K extends keyof any, V extends (bytes: Uint8Array) => any> = {
+  [P in K]: V
+};
+
+export const googleDeserializeMap: DeserializeMap<string, (bytes: Uint8Array) => Message> = {
   'google.rpc.RetryInfo': RetryInfo.deserializeBinary,
   'google.rpc.DebugInfo': DebugInfo.deserializeBinary,
   'google.rpc.QuotaFailure': QuotaFailure.deserializeBinary,
@@ -51,20 +55,72 @@ export class StatusProto {
 
   private message: string;
 
+  private detailDescription: string;
+
   private details: Message[];
 
-  static fromStatus(status: Status) {
-    return new StatusProto(status.getCode(), status.getMessage(), status);
+  static fromStatus(st: Status) {
+    return new StatusProto(st.getCode(), st.getMessage());
   }
 
-  constructor(code: number, message: string, status?: Status) {
+  constructor(code: number, message: string, detailDescription?: string) {
     this.code = code;
     this.message = message;
-    if (!status) {
-      this.status = new Status();
-      this.status.setCode(code);
-      this.status.setMessage(message);
-    } else this.status = status;
+    this.detailDescription = detailDescription;
+    this.status = new Status();
+    this.status.setCode(code);
+    this.status.setMessage(message);
+  }
+
+  toServiceError(typeName: string) {
+    const error: ServiceError = {
+      name: 'ServiceError',
+      code: this.code,
+      message: this.message,
+      details: this.detailDescription,
+    };
+    error.metadata = new Metadata();
+
+    this.status.setDetailsList([]);
+    this.details.forEach((detail) => {
+      const a = new Any();
+      a.pack(detail.serializeBinary(), typeName);
+      this.status.addDetails(a);
+    });
+    error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(this.status.serializeBinary()));
+
+    return error;
+  }
+
+  static fromServiceError(
+    error: ServiceError,
+    deserializeMap?: DeserializeMap<string, (bytes: Uint8Array) => Message>,
+  ): StatusProto | null {
+    const dMap = deserializeMap || googleDeserializeMap;
+    const statusProto = new StatusProto(error.code, error.message, error.details);
+
+    if (error.metadata?.get(GRPC_ERROR_DETAILS_KEY)?.length > 0) {
+      const buffer = error.metadata.get(GRPC_ERROR_DETAILS_KEY)[0];
+
+      if (buffer && typeof buffer !== 'string') {
+        const st: Status | undefined = Status.deserializeBinary(buffer);
+
+        const details = st
+          .getDetailsList()
+          .map((detail) => {
+            const deserialize = dMap[detail.getTypeName()];
+            if (deserialize) {
+              const message = detail.unpack(deserialize, detail.getTypeName());
+
+              return message;
+            }
+            return null;
+          })
+          .filter(notEmpty);
+        statusProto.addDetails(details);
+      }
+    }
+    return statusProto;
   }
 
   getStatus() {
@@ -77,6 +133,10 @@ export class StatusProto {
 
   getMessage() {
     return this.message;
+  }
+
+  getDetailDescription() {
+    return this.detailDescription;
   }
 
   getDetails() {
@@ -94,64 +154,4 @@ export class StatusProto {
     this.details.push(...details);
     return this;
   }
-}
-
-export function deserializeGrpcStatusDetails<
-  // eslint-disable-next-line space-before-function-paren
-  TMap extends Record<string, (bytes: Uint8Array) => Message>
->(
-  error: ServiceError,
-  deserializeMap: TMap): StatusProto | null {
-  if (!error.metadata) {
-    return null;
-  }
-
-  const buffer = error.metadata.get(GRPC_ERROR_DETAILS_KEY)[0];
-
-  if (!buffer || typeof buffer === 'string') {
-    return null;
-  }
-
-  const status: Status | undefined = Status.deserializeBinary(buffer);
-
-  const statusProto = StatusProto.fromStatus(status);
-
-  const details = status
-    .getDetailsList()
-    .map((detail) => {
-      const deserialize = deserializeMap[detail.getTypeName()];
-      if (deserialize) {
-        const message = detail.unpack(deserialize, detail.getTypeName());
-
-        return message;
-      }
-      return null;
-    })
-    .filter(notEmpty);
-
-  return statusProto.addDetails(details);
-}
-
-export function deserializeGoogleGrpcStatusDetails(error: ServiceError) {
-  return deserializeGrpcStatusDetails(error, googleDeserializeMap);
-}
-
-export function serializeGrpcStatusDetails(statusProto: StatusProto, typeName: string) {
-  const error: ServiceError = {
-    name: 'ServiceError',
-    code: statusProto.getCode(),
-    message: statusProto.getMessage(),
-    details: statusProto.getMessage(),
-  };
-  error.metadata = new Metadata();
-
-  const st = statusProto.getStatus();
-  statusProto.getDetails().forEach((detail) => {
-    const a = new Any();
-    a.pack(detail.serializeBinary(), typeName);
-    st.addDetails(a);
-  });
-  error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(st.serializeBinary()));
-
-  return error;
 }

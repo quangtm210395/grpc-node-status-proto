@@ -5,6 +5,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'keyword-spacing': 'off',
     'no-param-reassign': 'off',
-    'func-names': 'off'
+    'func-names': 'off',
+    'space-before-function-paren': 'off'
   },
 };
