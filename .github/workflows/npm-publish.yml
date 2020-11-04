@@ -4,8 +4,10 @@
 name: NPM publish
 
 on:
-  release:
-    types: [created]
+  branch:
+    - master
+  # release:
+  #   types: [created]
 
 jobs:
   build:
