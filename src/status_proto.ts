@@ -83,10 +83,10 @@ export class StatusProto<T extends Message> {
 
   static fromServiceError<T extends Message>(
     error: ServiceError,
-    deserializeMap?: DeserializeMap<string, (bytes: Uint8Array) => T>,
+    deserializeMap: DeserializeMap<string, (bytes: Uint8Array) => T>,
   ): StatusProto<ReturnType<DeserializeMap<string, (bytes: Uint8Array)
     => T>[keyof DeserializeMap<string, (bytes: Uint8Array) => T>]>> | null {
-    const statusProto = new StatusProto<T>(error.code, error.details || error.message);
+    const statusProto = new StatusProto<any>(error.code, error.details || error.message);
 
     if (error.metadata?.get(GRPC_ERROR_DETAILS_KEY)?.length > 0) {
       const buffer = error.metadata.get(GRPC_ERROR_DETAILS_KEY)[0];
