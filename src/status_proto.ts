@@ -72,7 +72,7 @@ export class StatusProto {
     this.status.setMessage(message);
   }
 
-  toServiceError(typeName: string) {
+  toServiceError() {
     const error: ServiceError = {
       name: 'ServiceError',
       code: this.code,
@@ -80,13 +80,6 @@ export class StatusProto {
       details: this.detailDescription,
     };
     error.metadata = new Metadata();
-
-    this.status.setDetailsList([]);
-    this.details.forEach((detail) => {
-      const a = new Any();
-      a.pack(detail.serializeBinary(), typeName);
-      this.status.addDetails(a);
-    });
     error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(this.status.serializeBinary()));
 
     return error;
@@ -117,7 +110,7 @@ export class StatusProto {
             return null;
           })
           .filter(notEmpty);
-        statusProto.addDetails(details);
+        statusProto.addUnpackedDetails(details);
       }
     }
     return statusProto;
@@ -143,13 +136,16 @@ export class StatusProto {
     return this.details;
   }
 
-  addDetail(detail: Message) {
+  addDetail(detail: Message, typeName: string) {
     if (!this.details) this.details = [];
     this.details.push(detail);
+    const a = new Any();
+    a.pack(detail.serializeBinary(), typeName);
+    this.status.addDetails(a);
     return this;
   }
 
-  addDetails(details: Message[]) {
+  private addUnpackedDetails(details: Message[]) {
     if (!this.details) this.details = [];
     this.details.push(...details);
     return this;
