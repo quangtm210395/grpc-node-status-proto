@@ -55,18 +55,15 @@ export class StatusProto {
 
   private message: string;
 
-  private detailDescription: string;
-
   private details: Message[];
 
   static fromStatus(st: Status) {
     return new StatusProto(st.getCode(), st.getMessage());
   }
 
-  constructor(code: number, message: string, detailDescription?: string) {
+  constructor(code: number, message: string) {
     this.code = code;
     this.message = message;
-    this.detailDescription = detailDescription;
     this.status = new Status();
     this.status.setCode(code);
     this.status.setMessage(message);
@@ -89,7 +86,7 @@ export class StatusProto {
     deserializeMap?: DeserializeMap<string, (bytes: Uint8Array) => Message>,
   ): StatusProto | null {
     const dMap = deserializeMap || googleDeserializeMap;
-    const statusProto = new StatusProto(error.code, error.message, error.details);
+    const statusProto = new StatusProto(error.code, error.details || error.message);
 
     if (error.metadata?.get(GRPC_ERROR_DETAILS_KEY)?.length > 0) {
       const buffer = error.metadata.get(GRPC_ERROR_DETAILS_KEY)[0];
@@ -127,10 +124,6 @@ export class StatusProto {
     return this.message;
   }
 
-  getDetailDescription() {
-    return this.detailDescription;
-  }
-
   getDetails() {
     return this.details;
   }
@@ -148,5 +141,18 @@ export class StatusProto {
     if (!this.details) this.details = [];
     this.details.push(...details);
     return this;
+  }
+
+  toObject() {
+    return {
+      code: this.code,
+      message: this.message,
+      status: this.status.toObject(),
+      details: this.details.map((d) => (d.toObject())),
+    };
+  }
+
+  toString() {
+    return `${this.code},${this.message},{${this.status.toString}},[${this.details.map((d) => (d.toString()))}]`;
   }
 }
