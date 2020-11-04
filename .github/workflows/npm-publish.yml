@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npm run clean-build
+      - run: npm run clean-build --build-from-resource
 
   publish-npm:
     needs: build
