@@ -32,7 +32,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci --build-from-resource
       - run: npm run clean-build
-      - run: npm publish
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
