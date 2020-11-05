@@ -1,4 +1,4 @@
-# node-grpc-status-proto
+# grpc-node-status-proto
 
 <!-- [![Version](https://img.shields.io/npm/v/@stackpath/node-grpc-error-details.svg)](https://www.npmjs.com/package/@stackpath/node-grpc-error-details)
 [![License](https://img.shields.io/npm/l/@stackpath/node-grpc-error-details.svg)](https://www.npmjs.com/package/@stackpath/node-grpc-error-details)
@@ -15,10 +15,10 @@ This library, given an error, returns back the both deserialized Status message 
 
 ```bash
 # yarn
-yarn add @nextpay/node-grpc-status-proto
+yarn add @nextpay/grpc-node-status-proto
 
 # npm
-npm install @nextpay/node-grpc-status-proto
+npm install @nextpay/grpc-node-status-proto
 ```
 
 ## Usage
