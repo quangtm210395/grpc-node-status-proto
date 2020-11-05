@@ -1,8 +1,8 @@
 # grpc-node-status-proto
 
-<!-- [![Version](https://img.shields.io/npm/v/@stackpath/node-grpc-error-details.svg)](https://www.npmjs.com/package/@stackpath/node-grpc-error-details)
-[![License](https://img.shields.io/npm/l/@stackpath/node-grpc-error-details.svg)](https://www.npmjs.com/package/@stackpath/node-grpc-error-details)
-[![Build Status](https://travis-ci.org/stackpath/node-grpc-error-details.svg?branch=master)](https://travis-ci.org/stackpath/node-grpc-error-details) -->
+[![Version](https://img.shields.io/npm/v/@nextpay/grpc-node-status-proto.svg)](https://www.npmjs.com/package/@nextpay/grpc-node-status-proto)
+[![License](https://img.shields.io/npm/l/@nextpay/grpc-node-status-proto.svg)](https://github.com/quangtm210395/grpc-node-status-proto/)
+[![Build Status](https://github.com/quangtm210395/grpc-node-status-proto/workflows/NPM%20publish/badge.svg?branch=master)](https://github.com/quangtm210395/grpc-node-status-proto/actions)
 
 Utility function for serializing and deserializing between the `grpc-status-details-bin` metadata value and StatusProto
   when using the [node grpc](https://github.com/grpc/grpc-node/tree/master/packages/grpc-native-core) package. Error details allow sending/receiving additional data along with an error. For instance, if a request sends invalid data, a gRPC server could send back a [BadRequest](https://github.com/googleapis/googleapis/blob/master/google/rpc/error_details.proto#L169) message identifying the field and why it failed validation.
