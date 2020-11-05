@@ -1,33 +1,23 @@
-import { Message } from 'google-protobuf';
 import { Metadata, ServiceError } from 'grpc';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
+import { Message } from 'google-protobuf';
 import { Status } from './google/status_pb';
-import {
-  RetryInfo,
-  DebugInfo,
-  QuotaFailure,
-  PreconditionFailure,
-  BadRequest,
-  RequestInfo,
-  ResourceInfo,
-  Help,
-  LocalizedMessage,
-} from './google/error_details_pb';
+import googleErrorDetails from './google/error_details_pb';
 
 type DeserializeMap<K extends keyof any, V extends (bytes: Uint8Array) => any> = {
   [P in K]: V
 };
 
 export const googleDeserializeMap = {
-  'google.rpc.RetryInfo': RetryInfo.deserializeBinary,
-  'google.rpc.DebugInfo': DebugInfo.deserializeBinary,
-  'google.rpc.QuotaFailure': QuotaFailure.deserializeBinary,
-  'google.rpc.PreconditionFailure': PreconditionFailure.deserializeBinary,
-  'google.rpc.BadRequest': BadRequest.deserializeBinary,
-  'google.rpc.RequestInfo': RequestInfo.deserializeBinary,
-  'google.rpc.ResourceInfo': ResourceInfo.deserializeBinary,
-  'google.rpc.Help': Help.deserializeBinary,
-  'google.rpc.LocalizedMessage': LocalizedMessage.deserializeBinary,
+  'google.rpc.RetryInfo': googleErrorDetails.RetryInfo.deserializeBinary,
+  'google.rpc.DebugInfo': googleErrorDetails.DebugInfo.deserializeBinary,
+  'google.rpc.QuotaFailure': googleErrorDetails.QuotaFailure.deserializeBinary,
+  'google.rpc.PreconditionFailure': googleErrorDetails.PreconditionFailure.deserializeBinary,
+  'google.rpc.BadRequest': googleErrorDetails.BadRequest.deserializeBinary,
+  'google.rpc.RequestInfo': googleErrorDetails.RequestInfo.deserializeBinary,
+  'google.rpc.ResourceInfo': googleErrorDetails.ResourceInfo.deserializeBinary,
+  'google.rpc.Help': googleErrorDetails.Help.deserializeBinary,
+  'google.rpc.LocalizedMessage': googleErrorDetails.LocalizedMessage.deserializeBinary,
 };
 
 export const googleErrorDetailsTypeNameMap = {
@@ -81,12 +71,12 @@ export class StatusProto<T extends Message> {
     return error;
   }
 
-  static fromServiceError<T extends Message>(
+  static fromServiceError<TMap extends Record<string, (bytes: Uint8Array) => any>>(
     error: ServiceError,
-    deserializeMap: DeserializeMap<string, (bytes: Uint8Array) => T>,
-  ): StatusProto<ReturnType<DeserializeMap<string, (bytes: Uint8Array)
-    => T>[keyof DeserializeMap<string, (bytes: Uint8Array) => T>]>> | null {
-    const statusProto = new StatusProto<any>(error.code, error.details || error.message);
+    deserializeMap: TMap): StatusProto<ReturnType<TMap[keyof TMap]>> | null {
+    const statusProto = new StatusProto<ReturnType<TMap[keyof TMap]>>(
+      error.code, error.details || error.message,
+    );
 
     if (error.metadata?.get(GRPC_ERROR_DETAILS_KEY)?.length > 0) {
       const buffer = error.metadata.get(GRPC_ERROR_DETAILS_KEY)[0];
@@ -137,7 +127,7 @@ export class StatusProto<T extends Message> {
     return this;
   }
 
-  private addUnpackedDetails(details: T[]) {
+  private addUnpackedDetails(details: Array<T>) {
     if (!this.details) this.details = [];
     this.details.push(...details);
     return this;

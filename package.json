@@ -1,6 +1,6 @@
 {
   "name": "@nextpay/grpc-node-status-proto",
-  "version": "1.0.6",
+  "version": "1.0.13",
   "description": "",
   "main": "dist/index",
   "typings": "dist/index",
@@ -22,9 +22,7 @@
     "@types/node": "*",
     "@types/protobufjs": "*",
     "google-protobuf": "^3.11.4",
-    "grpc": "^1.24.2",
-    "grpc_tools_node_protoc_ts": "^2.5.10",
-    "typescript": "^3.9.2"
+    "grpc": "^1.24.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.6.0",
@@ -32,7 +30,9 @@
     "eslint-config-airbnb-typescript": "^5.0.0",
     "eslint-plugin-import": "^2.20.2",
     "husky": "^4.2.5",
-    "node-pre-gyp": "^0.16.0"
+    "grpc_tools_node_protoc_ts": "^2.5.10",
+    "node-pre-gyp": "^0.16.0",
+    "typescript": "^3.9.2"
   },
   "husky": {
     "hooks": {
