@@ -1,0 +1,27 @@
+{
+  "name": "grpc-node-status-proto-example",
+  "version": "1.0.0",
+  "description": "Examples for @nextpay/grpc-node-status-proto",
+  "main": "index",
+  "scripts": {
+    "start": "node ./index.js",
+    "dev": "nodemon -w . --exec node --inspect=0.0.0.0:9227 -r dotenv/config -r ts-node/register index.ts",
+    "build": "tsc",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
+    "lint-fix": "eslint --fix --ext .js,.jsx,.ts,.tsx ./"
+  },
+  "author": "quangtm210395",
+  "license": "MIT",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.5",
+    "@nextpay/grpc-node-status-proto": "^1.1.0",
+    "google-protobuf": "^3.13.0",
+    "grpc": "^1.24.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.6",
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package com.greeter;
+
+option go_package = ".;pb";
+option java_package = "com.greeter";
+option java_generic_services = true;
+
+message Text {
+  string message = 1;
+}
+
+service Greeter {
+  rpc hello(Text) returns (Text);
+}
