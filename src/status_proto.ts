@@ -118,11 +118,11 @@ export class StatusProto<T extends Message> {
     return this.details;
   }
 
-  addDetail(detail: T, typeName: string) {
+  addDetail(detail: T, typeName: string, typeNamePrefix?: string) {
     if (!this.details) this.details = [];
     this.details.push(detail);
     const a = new Any();
-    a.pack(detail.serializeBinary(), typeName);
+    a.pack(detail.serializeBinary(), typeName, typeNamePrefix);
     this.status.addDetails(a);
     return this;
   }
