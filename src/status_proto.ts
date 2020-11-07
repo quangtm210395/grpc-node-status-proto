@@ -57,6 +57,7 @@ export class StatusProto<T extends Message> {
     this.status = new Status();
     this.status.setCode(code);
     this.status.setMessage(message);
+    this.details = [];
   }
 
   toServiceError() {
