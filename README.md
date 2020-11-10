@@ -54,7 +54,7 @@ Example:
 ```js
 import {
   googleDeserializeMap, StatusProto, BadRequest, Status,
-} from "@nextpay/node-grpc-status-proto";
+} from "@nextpay/grpc-node-status-proto";
 
 // Make grpc call that fails and returns a Status object with
 // details in the `grpc-status-details-bin` Metadata property
@@ -103,7 +103,7 @@ Example:
 ```js
 import {
   StatusProto, BadRequest, googleErrorDetailsTypeNameMap,
-} from "@stackpath/node-grpc-status-proto";
+} from "@stackpath/grpc-node-status-proto";
 
 // import others thing from grpc...
 
