@@ -60,13 +60,13 @@ export class StatusProto<T extends Message> {
     this.details = [];
   }
 
-  toServiceError() {
+  toServiceError(metadata?: Metadata) {
     const error: ServiceError = {
       name: 'ServiceError',
       code: this.code,
       message: this.message,
     };
-    error.metadata = new Metadata();
+    error.metadata = metadata || new Metadata();
     error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(this.status.serializeBinary()));
 
     return error;
