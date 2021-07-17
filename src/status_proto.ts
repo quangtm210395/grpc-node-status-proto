@@ -18,6 +18,7 @@ export const googleDeserializeMap = {
   'google.rpc.ResourceInfo': googleErrorDetails.ResourceInfo.deserializeBinary,
   'google.rpc.Help': googleErrorDetails.Help.deserializeBinary,
   'google.rpc.LocalizedMessage': googleErrorDetails.LocalizedMessage.deserializeBinary,
+  'google.rpc.ErrorInfo': googleErrorDetails.ErrorInfo.deserializeBinary,
 };
 
 export const googleErrorDetailsTypeNameMap = {
@@ -30,6 +31,7 @@ export const googleErrorDetailsTypeNameMap = {
   ResourceInfo: 'google.rpc.ResourceInfo',
   Help: 'google.rpc.Help',
   LocalizedMessage: 'google.rpc.LocalizedMessage',
+  ErrorInfo: 'google.rpc.ErrorInfo',
 };
 
 const notEmpty = <TValue>(
