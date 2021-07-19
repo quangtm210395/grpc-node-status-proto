@@ -1,6 +1,6 @@
 {
   "name": "@nextpay/grpc-node-status-proto",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/index",
   "typings": "dist/index",

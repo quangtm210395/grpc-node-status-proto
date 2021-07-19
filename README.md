@@ -107,7 +107,7 @@ Example:
 ```js
 import {
   StatusProto, BadRequest, googleErrorDetailsTypeNameMap,
-} from "@stackpath/grpc-node-status-proto";
+} from "@nextpay/grpc-node-status-proto";
 
 // import others thing from grpc...
 
