@@ -1,4 +1,4 @@
-import { Metadata, ServiceError } from 'grpc';
+import { Metadata, ServiceError } from '@grpc/grpc-js';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import { Message } from 'google-protobuf';
 import { Status } from './google/status_pb';
@@ -67,8 +67,9 @@ export class StatusProto<T extends Message> {
       name: 'ServiceError',
       code: this.code,
       message: this.message,
+      details: this.message,
+      metadata: metadata || new Metadata(),
     };
-    error.metadata = metadata || new Metadata();
     error.metadata.add(GRPC_ERROR_DETAILS_KEY, Buffer.from(this.status.serializeBinary()));
 
     return error;

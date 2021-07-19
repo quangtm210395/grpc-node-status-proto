@@ -109,7 +109,7 @@ import {
 
 // adding hello rpc function
 server.addService(Greeter.Greeter.service, {
-  hello(call: ServerUnaryCall<any>, callback: any) {
+  hello(call: ServerUnaryCall<any, any>, callback: any) {
     console.info('greeting: ', call.request.message);
     if (!call.request.message) {
       const metadata: Metadata = new Metadata();
