@@ -25,6 +25,10 @@ npm install @nextpay/grpc-node-status-proto
 
 This library provide methods to serialize and deserialize `grpc-status-details-bin` metadata value and StatusProto when using the [node grpc](https://github.com/grpc/grpc-node/tree/master/packages/grpc-native-core) package.
 
+Version [1.x](https://www.npmjs.com/package/@nextpay/grpc-node-status-proto/v/1.1.6) using [grpc](https://www.npmjs.com/package/grpc)
+
+Version [2.x](https://www.npmjs.com/package/@nextpay/grpc-node-status-proto/v/latest) using new [@grpc/grpc-js](https://www.npmjs.com/package/@grpc/grpc-js)
+
 ```js
 export class StatusProto<T extends Message> {
   private status: Status | undefined;
